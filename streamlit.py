@@ -7,7 +7,7 @@ Original file is located at
     https://colab.research.google.com/drive/1oCl_r2rdVjmrH3nY9VOAGttyOzX4eTOh
 """
 
-!pip install streamlit
+#pip install streamlit
 
 import streamlit as st
 import pandas as pd
@@ -53,13 +53,9 @@ if 'filter_potential' not in st.session_state:
 
 # Initialize a default selected outlet from the data
 if 'selected_outlet' not in st.session_state or st.session_state.selected_outlet is None:
-    default_outlet = outlets_data[
-        (outlets_data["name"] == "The Crown Pub") &
-        (outlets_data["country"] == "UK") &
-        (outlets_data["city"] == "London")
-    ]
-    if not default_outlet.empty:
-        st.session_state.selected_outlet = default_outlet.iloc[0]
+    if not outlets_data.empty:
+        # Just select the first outlet as default
+        st.session_state.selected_outlet = outlets_data.iloc[0]
 
 # Render the header with logo and navigation
 render_header()
@@ -83,13 +79,19 @@ with tab1:
     filter_cols = render_filters()
 
     # Display map visualization of outlets
-    outlets_filtered = outlets_data[
-        (outlets_data["country"] == st.session_state.filter_country) &
-        (outlets_data["city"] == st.session_state.filter_city) &
-        (outlets_data["territory"] == st.session_state.filter_territory) &
-        (outlets_data["diageo_coverage"] == st.session_state.filter_coverage) &
-        (outlets_data["outlet_potential"] == st.session_state.filter_potential)
-    ]
+    outlets_filtered = outlets_data.copy()
+
+    # Apply filters if data is available
+    if 'country' in outlets_filtered.columns:
+        outlets_filtered = outlets_filtered[outlets_filtered["country"] == st.session_state.filter_country]
+    if 'city' in outlets_filtered.columns:
+        outlets_filtered = outlets_filtered[outlets_filtered["city"] == st.session_state.filter_city]
+    if 'territory' in outlets_filtered.columns:
+        outlets_filtered = outlets_filtered[outlets_filtered["territory"] == st.session_state.filter_territory]
+    if 'diageo_coverage' in outlets_filtered.columns:
+        outlets_filtered = outlets_filtered[outlets_filtered["diageo_coverage"] == st.session_state.filter_coverage]
+    if 'outlet_potential' in outlets_filtered.columns:
+        outlets_filtered = outlets_filtered[outlets_filtered["outlet_potential"] == st.session_state.filter_potential]
 
     if outlets_filtered.empty:
         st.info("No outlets match the current filters.")
