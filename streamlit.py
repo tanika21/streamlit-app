@@ -18,6 +18,11 @@ if st.button("Click Me!", type="primary"):
     # Display the welcome message when button is clicked
     st.success("Welcome to Streamlit! 🎉")
     st.balloons()  # Add a fun animation effect
+    
+if st.button("Hello", type="primary"):
+    # Display the welcome message when button is clicked
+    st.success("My name is Samantha! 🎉")
+    st.balloons()  # Add a fun animation effect
 
 # Add some information about the app
 st.write("")
